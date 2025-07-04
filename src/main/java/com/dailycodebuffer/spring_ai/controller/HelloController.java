@@ -1,23 +1,23 @@
 package com.dailycodebuffer.spring_ai.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HelloController {
-    
 
     private final ChatClient chatClient;
-    
 
-    public HelloController(ChatClient.Builder builder){
-        this.chatClient = builder.build();
+    public HelloController(@Autowired ChatClient.Builder builder){
+        chatClient = builder.build();
     }
 
-    @PostMapping("/message")
-    public String prompt(@RequestBody String message){
-       return chatClient.prompt(message).call().content();
+    @GetMapping
+    public String prompt(@RequestParam String message) {
+        return chatClient.prompt(message)
+                .call().content();
     }
 }
