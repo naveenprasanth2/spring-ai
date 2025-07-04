@@ -18,6 +18,10 @@ public class HelloController {
     @GetMapping
     public String prompt(@RequestParam String message) {
         return chatClient.prompt(message)
-                .call().content();
+                .call()
+                .chatResponse()
+                .getResult()
+                .getOutput()
+                .getText();
     }
 }
