@@ -1,14 +1,20 @@
 package com.dailycodebuffer.spring_ai.controller;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.converter.BeanOutputConverter;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.dailycodebuffer.spring_ai.model.Player;
 
 @RestController
 public class PlayerController {
@@ -20,15 +26,25 @@ public class PlayerController {
     }
 
     @GetMapping("/player")
-    public String getPlayerAchievement(@RequestParam String name) {
+    public List<Player> getPlayerAchievement(@RequestParam String name) {
+        BeanOutputConverter<List<Player>> converter = new BeanOutputConverter<>(new ParameterizedTypeReference<>() {
+
+        });
         String message = """
                 Generate a list of Career achievements for the sportsperson {sports}.
                 Include the Player as the key and achievements as the value for it
+                {format}
                 """;
         PromptTemplate promptTemplate = new PromptTemplate(message);
-        Prompt prompt = promptTemplate.create(Map.of("sports", name));
-        ChatResponse chatResponse = chatClient.prompt(prompt).call().chatResponse();
+        Prompt prompt = promptTemplate.create(Map.of("sports", name, "format", converter.getFormat()));
+        // ChatResponse chatResponse = chatClient.prompt(prompt).call().chatResponse();
 
-        return chatResponse.getResult().getOutput().getText();
+        // return chatResponse.getResult().getOutput();
+        Generation result = chatClient.prompt(prompt)
+                .call()
+                .chatResponse()
+                .getResult();
+        return converter.convert(Optional.ofNullable(result.getOutput().getText()).orElse("[]"));
+
     }
 }
