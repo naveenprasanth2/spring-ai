@@ -40,7 +40,8 @@ public class PlayerController {
         // ChatResponse chatResponse = chatClient.prompt(prompt).call().chatResponse();
 
         // return chatResponse.getResult().getOutput();
+        @SuppressWarnings("null")
         Generation response = chatClient.prompt(prompt).call().chatResponse().getResult();
-        return converter.convert(Optional.ofNullable(response.getOutput()).orElse("[]"));
+        return converter.convert(Optional.ofNullable(response.getOutput().getText()).orElse("[]"));
     }
 }
