@@ -44,4 +44,18 @@ public class PlayerController {
         Generation response = chatClient.prompt(prompt).call().chatResponse().getResult();
         return converter.convert(Optional.ofNullable(response.getOutput().getText()).orElse("[]"));
     }
+
+    @GetMapping("/achievement/player")
+    public List<String> getAchievement(@RequestParam String name) {
+        BeanOutputConverter<List<String>> converter = new BeanOutputConverter<>(new ParameterizedTypeReference<>() {
+
+        });
+        String message = """
+                    Provide a list of achievemenrs for {player} {format}
+                """;
+        PromptTemplate template = new PromptTemplate(message);
+        Prompt prompt = template.create(Map.of("player", name, "format", converter.getFormat()));
+        Generation generation = chatClient.prompt(prompt).call().chatResponse().getResult();
+        return converter.convert(Optional.ofNullable(generation.getOutput().getText()).orElse("[]"));
+    }
 }
