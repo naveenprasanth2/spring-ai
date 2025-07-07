@@ -48,9 +48,9 @@ public class PlayerController {
 
     @GetMapping("/achievement/player")
     public List<Achievement> getAchievement(@RequestParam String name) {
-        BeanOutputConverter<List<String>> converter = new BeanOutputConverter<>(new ParameterizedTypeReference<>() {
-
-        });
+        BeanOutputConverter<List<Achievement>> converter = new BeanOutputConverter<>(
+                new ParameterizedTypeReference<List<Achievement>>() {
+                });
         String message = """
                     Provide a list of achievemenrs for {player} {format}
                 """;
