@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dailycodebuffer.spring_ai.model.Achievement;
 import com.dailycodebuffer.spring_ai.model.Player;
 
 @RestController
@@ -46,7 +47,7 @@ public class PlayerController {
     }
 
     @GetMapping("/achievement/player")
-    public List<String> getAchievement(@RequestParam String name) {
+    public List<Achievement> getAchievement(@RequestParam String name) {
         BeanOutputConverter<List<String>> converter = new BeanOutputConverter<>(new ParameterizedTypeReference<>() {
 
         });
@@ -55,7 +56,7 @@ public class PlayerController {
                 """;
         PromptTemplate template = new PromptTemplate(message);
         Prompt prompt = template.create(Map.of("player", name, "format", converter.getFormat()));
-        Generation generation = chatClient.prompt(prompt).call().chatResponse().getResult();
-        return converter.convert(Optional.ofNullable(generation.getOutput().getText()).orElse("[]"));
+        return chatClient.prompt(prompt).call().entity(new ParameterizedTypeReference<List<Achievement>>() {
+        });
     }
 }
