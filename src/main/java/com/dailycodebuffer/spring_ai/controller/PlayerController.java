@@ -49,14 +49,14 @@ public class PlayerController {
     @GetMapping("/achievement/player")
     public List<Achievement> getAchievement(@RequestParam String name) {
         BeanOutputConverter<List<Achievement>> converter = new BeanOutputConverter<>(
-                new ParameterizedTypeReference<List<Achievement>>() {
+                new ParameterizedTypeReference<>() {
                 });
         String message = """
                     Provide a list of achievemenrs for {player} {format}
                 """;
         PromptTemplate template = new PromptTemplate(message);
         Prompt prompt = template.create(Map.of("player", name, "format", converter.getFormat()));
-        return chatClient.prompt(prompt).call().entity(new ParameterizedTypeReference<List<Achievement>>() {
+        return chatClient.prompt(prompt).call().entity(new ParameterizedTypeReference<>() {
         });
     }
 }
